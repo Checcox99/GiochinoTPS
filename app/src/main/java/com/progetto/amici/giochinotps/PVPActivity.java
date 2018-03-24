@@ -1,6 +1,7 @@
 package com.progetto.amici.giochinotps;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,28 +13,60 @@ public class PVPActivity extends AppCompatActivity {
 
     private String currentTurn = "1";
     private Boolean endGame = false;
-    private Integer globalp1Score = 0;
-    private Integer globalp2Score = 0;
+    private int globalp1Score;
+    private int globalp2Score;
+    TextView player1;
+    TextView player2;
+    TextView resultView;
+    TextView player1Score;
+    TextView player2Score;
+    TextView p1Score;
+    TextView p2Score;
+    String p1;
+    String p2;
+    int flag=0;
+    double turn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            super.onRestoreInstanceState(savedInstanceState);
+            p1=savedInstanceState.getString("player1");
+            p2=savedInstanceState.getString("player2");
+            globalp1Score = savedInstanceState.getInt("globalp1Score");
+            globalp2Score = savedInstanceState.getInt("globalp2Score");
+            currentTurn = savedInstanceState.getString("currentTurn");
+            flag=savedInstanceState.getInt("flag");
+            endGame=savedInstanceState.getBoolean("endGame");
+            turn=savedInstanceState.getDouble("turn");
+
+
+        }
         setContentView(R.layout.activity_pvpgame);
 
-        TextView player1Score = (TextView) findViewById(R.id.player1Score);
-        TextView player2Score = (TextView) findViewById(R.id.player2Score);
+         player1Score = (TextView) findViewById(R.id.player1Score);
+         player2Score = (TextView) findViewById(R.id.player2Score);
 
-        TextView player1 = (TextView) findViewById(R.id.player1View);
-        TextView player2 = (TextView) findViewById(R.id.player2View);
+         player1 = (TextView) findViewById(R.id.player1View);
+         player2 = (TextView) findViewById(R.id.player2View);
 
-        TextView resultView = (TextView) findViewById(R.id.resultView);
+         resultView = (TextView) findViewById(R.id.resultView);
 
-        Intent i = getIntent();
-        String p1 = i.getStringExtra("player1");
-        String p2 = i.getStringExtra("player2");
+        if(flag==0) {
+            Intent i = getIntent();
+            p1 = i.getStringExtra("player1");
+            p2 = i.getStringExtra("player2");
+
+            globalp1Score = 0;
+            globalp2Score = 0;
+        }
 
         player1.setText(p1);
         player2.setText(p2);
+        player1Score.setText(""+globalp1Score);
+        player2Score.setText(""+globalp2Score);
 
 
         //Funzione random che decide chi inizia
@@ -52,9 +85,9 @@ public class PVPActivity extends AppCompatActivity {
 
     public void execute(View v){
         Button pressed = (Button) findViewById(v.getId());
-        TextView resultView = (TextView) findViewById(R.id.resultView);
-        TextView p1Score = (TextView) findViewById(R.id.player1Score);
-        TextView p2Score = (TextView) findViewById(R.id.player2Score);
+        resultView = (TextView) findViewById(R.id.resultView);
+         p1Score = (TextView) findViewById(R.id.player1Score);
+         p2Score = (TextView) findViewById(R.id.player2Score);
 
         if(pressed.getText().toString() != "")
             return;
@@ -78,10 +111,10 @@ public class PVPActivity extends AppCompatActivity {
                 resultView.setText("Vince " + result);
                 if(currentTurn == "1") {
                     globalp1Score++;
-                    p1Score.setText(globalp1Score.toString());
+                    p1Score.setText(""+globalp1Score);
                 }else{
                     globalp2Score++;
-                    p2Score.setText(globalp2Score.toString());
+                    p2Score.setText(""+globalp2Score);
                 }
                 return;
             }
@@ -89,8 +122,8 @@ public class PVPActivity extends AppCompatActivity {
 
         currentTurn = (currentTurn == "1" ? "2" : "1");
 
-        TextView player1 = (TextView) findViewById(R.id.player1View);
-        TextView player2 = (TextView) findViewById(R.id.player2View);
+        player1 = (TextView) findViewById(R.id.player1View);
+        player2 = (TextView) findViewById(R.id.player2View);
         resultView.setText(currentTurn == "1" ? "Turno di " + player1.getText().toString() : "Turno di " + player2.getText().toString());
     }
 
@@ -105,8 +138,8 @@ public class PVPActivity extends AppCompatActivity {
         Button bc = (Button) findViewById(R.id.bc);
         Button br = (Button) findViewById(R.id.br);
 
-        TextView player1 = (TextView) findViewById(R.id.player1View);
-        TextView player2 = (TextView) findViewById(R.id.player2View);
+        player1 = (TextView) findViewById(R.id.player1View);
+        player2 = (TextView) findViewById(R.id.player2View);
 
         Boolean end = false;
 
@@ -232,11 +265,11 @@ public class PVPActivity extends AppCompatActivity {
     public void resetGame(View v){
         endGame = false;
 
-        TextView player1 = (TextView) findViewById(R.id.player1View);
-        TextView player2 = (TextView) findViewById(R.id.player2View);
-        TextView resultView = (TextView) findViewById(R.id.resultView);
+        player1 = (TextView) findViewById(R.id.player1View);
+        player2 = (TextView) findViewById(R.id.player2View);
+        resultView = (TextView) findViewById(R.id.resultView);
 
-        double turn = (int)(Math.random()*2);
+        turn = (int)(Math.random()*2);
         if(turn == 1) {
             currentTurn = "1";
             resultView.setText("Turno di " + player1.getText().toString());
@@ -277,5 +310,37 @@ public class PVPActivity extends AppCompatActivity {
         br.setTextColor(Color.BLACK);
 
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("currentTurn", currentTurn);
+        outState.putString("player1", p1);
+        outState.putString("player2", p2);
+        outState.putInt("globalp1Score", globalp1Score);
+        outState.putInt("globalp2Score", globalp2Score);
+        outState.putInt("flag", 1);
+        outState.putDouble("turn", turn);
+        outState.putBoolean("endGame", endGame);
+
+
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        p1=savedInstanceState.getString("player1");
+        p2=savedInstanceState.getString("player2");
+        globalp1Score = savedInstanceState.getInt("globalp1Score");
+        globalp2Score = savedInstanceState.getInt("globalp2Score");
+        currentTurn = savedInstanceState.getString("currentTurn");
+        flag=savedInstanceState.getInt("flag");
+        endGame=savedInstanceState.getBoolean("endGame");
+        turn=savedInstanceState.getDouble("turn");
+
+        p1Score = (TextView) findViewById(R.id.player1Score);
+        p2Score = (TextView) findViewById(R.id.player2Score);
+        p1Score.setText(""+globalp1Score);
+        p2Score.setText(""+globalp2Score);
     }
 }

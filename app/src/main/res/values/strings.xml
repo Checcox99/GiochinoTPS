@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">GiochinoTPS</string>
+    <string name="giocatore_1">Giocatore 1</string>
+    <string name="inserisci_nome">inserisci nome</string>
+    <string name="giocatore_2">giocatore_2</string>
+    <string name="gioca">GIOCA</string>
+    <string name="vs">VS</string>
+    <string name="nuova_partita">Nuova Partita</string>
+    <string name="player_vs_player">Player VS Player</string>
+    <string name="player_vs_computer">Player VS Computer</string>
 </resources>
